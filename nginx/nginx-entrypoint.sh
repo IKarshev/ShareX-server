@@ -1,3 +1,3 @@
 #!/bin/sh
-envsubst '${DOMAIN}' < /etc/nginx/sites-enabled/nginx.conf.template > /etc/nginx/sites-enabled/${DOMAIN}
+envsubst '${DOMAIN}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 nginx -g 'daemon off;'
