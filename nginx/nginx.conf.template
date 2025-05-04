@@ -34,5 +34,18 @@ http {
         server_name     ${DOMAIN};
         root            /var/www/;
         index           index.php index.html;
+
+        location ~ \.php$ {
+            deny all;
+            return 403;
+        }
+
+        location ~ /\. {
+            deny all;
+            return 404;
+        }
+
+        # Ограничение на размер загружаемых файлов
+        client_max_body_size 500M;
     }
 }
