@@ -1,7 +1,7 @@
 FROM nginx:stable-alpine3.20-slim
 
-COPY nginx.conf.template /etc/nginx/sites-available/
+COPY nginx.conf.template /etc/nginx/sites-enabled/
 
-COPY --chmod=755 nginx-entrypoint.sh /etc/nginx/sites-available/
+COPY --chmod=755 nginx-entrypoint.sh /etc/nginx/sites-enabled/
 
-ENTRYPOINT ["/etc/nginx/sites-available/nginx-entrypoint.sh"]
+ENTRYPOINT ["/etc/nginx/sites-enabled/nginx-entrypoint.sh"]
