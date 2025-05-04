@@ -1,0 +1,14 @@
+services:
+  nginx:
+    container_name: sharex-nginx
+    build:
+      context: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - type: bind
+        source: ${PWD}/images
+        target: /var/www
+    environment:
+      - DOMAIN=${DOMAIN}
+    restart: unless-stopped
