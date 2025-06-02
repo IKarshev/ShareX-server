@@ -31,7 +31,7 @@ http {
     
     server {
         listen          80;
-        server_name     ${DOMAIN};
+        server_name     ${PROJECT_HOST};
         root            /var/www/;
         index           index.php index.html;
 

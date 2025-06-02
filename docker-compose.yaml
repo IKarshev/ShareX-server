@@ -1,26 +1,41 @@
 services:
   nginx:
-    container_name: sharex-nginx
+    container_name: ${PROJECT_HOST}-sharex-nginx
     build:
       context: nginx
-    ports:
-      - "80:80"
     volumes:
       - images:/var/www
     environment:
-      - DOMAIN=${DOMAIN}
+      - PROJECT_HOST=${PROJECT_HOST}
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-ssl.rule=Host(`${PROJECT_HOST}`) || Host(`www.${PROJECT_HOST}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-ssl.entrypoints=https"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-ssl.entrypoints=https"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-ssl.tls=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-ssl.tls.certresolver=${PROJECT_CERT_RESOLVER}"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-ssl.middlewares=${PROJECT_SSL_MIDDLEWARES}"
+
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${PROJECT_HOST}`) || Host(`www.${PROJECT_HOST}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.entrypoints=http"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=${PROJECT_MIDDLEWARES}"
+
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=80"
+    networks:
+      - ${COMPOSE_NETWORK_NAME}
     restart: unless-stopped
 
   ftp:
+    container_name: ${PROJECT_HOST}-sharex-ftp
     image: stilliard/pure-ftpd:hardened
-    container_name: sharex-ftpd
     volumes:
       - images:/home/ftpusers
     ports:
       - "21:21"
       - "30000-30009:30000-30009"
     environment:
-      - PUBLICHOST=${DOMAIN}
+      - PUBLICHOST=${PROJECT_HOST}
       - FTP_USER_NAME=${FTP_USER}
       - FTP_USER_PASS=${FTP_PASSWORD}
       - FTP_USER_HOME=/home/ftpusers
@@ -28,3 +43,8 @@ services:
 
 volumes:
   images:
+
+networks:
+  bitrix:
+    external: true
+    name: ${COMPOSE_COMMON_PROJECT_NAME}_${COMPOSE_NETWORK_NAME}
